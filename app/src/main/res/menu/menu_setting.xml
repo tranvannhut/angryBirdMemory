@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/reload"
+        android:icon="@drawable/reload"
+        app:showAsAction="ifRoom"
+        android:title="Reload image">
+    </item>
+    <item
+        android:id="@+id/amountImage"
+        android:title="Amount of image"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/subOneImage"
+                android:title="1 image">
+            </item>
+            <item
+                android:id="@+id/subTwoImage"
+                android:title="2 images">
+            </item>
+            <item
+                android:id="@+id/subThreeImage"
+                android:title="3 images">
+            </item>
+            <item
+                android:id="@+id/subFourImage"
+                android:title="4 images">
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/setting"
+        android:title="Setting">
+    </item>
+</menu>

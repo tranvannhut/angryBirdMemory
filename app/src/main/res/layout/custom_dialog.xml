@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/settingAmountImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:text="Số lượng hình ảnh cần phải nhớ"
+        android:textColor="#ff00"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:id="@+id/seekBarAmountImage"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:max="3"
+        android:maxHeight="15dp"
+        android:paddingLeft="5dp"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/timeRememberOriginImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:paddingLeft="5dp"
+        android:text="Thời gian ghi nhớ hình ảnh gốc"
+        android:textColor="#ff00"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:id="@+id/seekBarTimeOriginImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:max="300"
+        android:maxHeight="15dp"
+        android:min="0" />
+
+    <TextView
+        android:id="@+id/timeFindResultImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:paddingLeft="5dp"
+        android:progress="10"
+        android:text="Thời gian tìm hình ảnh giống với ảnh gốc"
+        android:textColor="#ff00"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:id="@+id/seekBarTimeResponseImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:max="300"
+        android:maxHeight="15dp"
+        android:min="0"
+        android:progress="10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:background="#2E7D32"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/btnApply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:text="Apply" />
+
+        <Button
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:background="#18318A"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="40dp"
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cancel" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

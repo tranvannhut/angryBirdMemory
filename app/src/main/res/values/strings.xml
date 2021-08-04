@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Angry Birds Memory</string>
+    <string-array name="array_image">
+        <item>bird1</item>
+        <item>bird2</item>
+        <item>bird3</item>
+        <item>bird4</item>
+        <item>bird5</item>
+        <item>bird6</item>
+        <item>bird7</item>
+        <item>bird8</item>
+        <item>bird9</item>
+        <item>bird10</item>
+        <item>bird11</item>
+        <item>bird12</item>
+        <item>bird13</item>
+        <item>bird14</item>
+        <item>bird15</item>
+        <item>bird16</item>
+        <item>bird17</item>
+        <item>bird18</item>
+        <item>bird19</item>
+        <item>bird20</item>
+        <item>bird21</item>
+        <item>bird22</item>
+        <item>bird23</item>
+        <item>bird24</item>
+    </string-array>
+    <string name="description_origin_image">The origin image to user find result based on this image</string>
+    <string name="description_result_image">The result image to user match with origin image</string>
+    <string name="description_reload_image">when user click image then reload origin and result image</string>
+</resources>
