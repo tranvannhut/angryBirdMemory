@@ -31,10 +31,9 @@ public class ListResultImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_result_image);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        tableLayout =  findViewById(R.id.tableListImage);
+        tableLayout =    findViewById(R.id.tableListImage);
         shareAmountImage = getSharedPreferences("totalPoint", MODE_PRIVATE);
         amountImage = shareAmountImage.getInt("amountImage", 1);
-
 
         int row = 8;
         int column = 3;
