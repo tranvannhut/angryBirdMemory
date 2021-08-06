@@ -16,18 +16,37 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <SeekBar
-        android:id="@+id/seekBarAmountImage"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:max="3"
-        android:maxHeight="15dp"
-        android:paddingLeft="5dp"
-        android:progress="0" />
+        android:weightSum="4">
+
+        <SeekBar
+            android:id="@+id/seekBarAmountImage"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="3"
+            android:max="3"
+            android:maxHeight="15dp"
+            android:paddingLeft="5dp" />
+
+        <TextView
+            android:id="@+id/informAmountImage"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1 image"
+            android:textColor="#ff00"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/timeRememberOriginImage"
@@ -40,14 +59,36 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <SeekBar
-        android:id="@+id/seekBarTimeOriginImage"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:max="300"
-        android:maxHeight="15dp"
-        android:min="0" />
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <SeekBar
+            android:id="@+id/seekBarTimeOriginImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="3"
+            android:max="300"
+            android:maxHeight="15dp"
+            android:min="0" />
+
+        <TextView
+            android:id="@+id/informTimeRememberOrigin"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1 seconds"
+            android:textColor="#ff00"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/timeFindResultImage"
@@ -61,49 +102,72 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <SeekBar
-        android:id="@+id/seekBarTimeResponseImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:max="300"
-        android:maxHeight="15dp"
-        android:min="0"
-        android:progress="10" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:weightSum="4">
+
+        <SeekBar
+            android:id="@+id/seekBarTimeResponseImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="3"
+            android:max="300"
+            android:maxHeight="15dp"
+            android:min="0"
+            android:progress="10" />
+
+        <TextView
+            android:id="@+id/informTimeResponseImage"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1 seconds"
+            android:textColor="#ff00"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <Button
-            android:background="#2E7D32"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="15dp"
             android:id="@+id/btnApply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="15dp"
             android:layout_weight="1"
+            android:background="#2E7D32"
             android:gravity="center"
-            android:textSize="20sp"
+            android:text="Apply"
             android:textColor="#fff"
-            android:textStyle="bold"
-            android:text="Apply" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <Button
-            android:textSize="20sp"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            android:background="#18318A"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="40dp"
             android:id="@+id/btnCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="40dp"
             android:layout_weight="1"
+            android:background="#18318A"
             android:gravity="center"
-            android:text="Cancel" />
+            android:text="Cancel"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

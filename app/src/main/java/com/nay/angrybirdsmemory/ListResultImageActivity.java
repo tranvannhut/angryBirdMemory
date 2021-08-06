@@ -1,18 +1,13 @@
 package com.nay.angrybirdsmemory;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.CountDownTimer;
 import android.util.TypedValue;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -28,6 +23,7 @@ public class ListResultImageActivity extends Activity {
     SharedPreferences shareAmountImage; // save points
     public int countImage = 1;
     public int amountImage;
+    CountDownTimer countDownTimer;
 
 
     @Override
@@ -35,9 +31,10 @@ public class ListResultImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_result_image);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        tableLayout = (TableLayout) findViewById(R.id.tableListImage);
+        tableLayout =  findViewById(R.id.tableListImage);
         shareAmountImage = getSharedPreferences("totalPoint", MODE_PRIVATE);
         amountImage = shareAmountImage.getInt("amountImage", 1);
+
 
         int row = 8;
         int column = 3;
@@ -62,16 +59,11 @@ public class ListResultImageActivity extends Activity {
                 tableRow.addView(imageView); //add each image into row
                 listNameImage = new ArrayList<>(); // Initial array
                 // get event id of image
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        checkAmount(imageView, position);
-
-                    }
-                });
+                imageView.setOnClickListener(v -> checkAmount(imageView, position));
 
             }
             tableLayout.addView(tableRow); // add each image into column
+            setTimeResponseImage();
         }
 
     }
@@ -89,6 +81,7 @@ public class ListResultImageActivity extends Activity {
 
 
         if (countImage == amountImage) {
+            countDownTimer.cancel();
             imageView.setEnabled(false);
             imageView.setImageAlpha(70);
             listNameImage.add(QuestionAngryBirdActivity.arrayListImage.get((position)));
@@ -102,8 +95,24 @@ public class ListResultImageActivity extends Activity {
             imageView.setImageAlpha(70);
             listNameImage.add(QuestionAngryBirdActivity.arrayListImage.get((position)));
         }
-
     }
 
-    ;
+    private void setTimeResponseImage() {
+        int timeResponse = QuestionAngryBirdActivity.timeResponse;
+        countDownTimer = new CountDownTimer(timeResponse, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                //out of time to response image
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
+                finish();
+            }
+        }.start();
+
+    }
 }

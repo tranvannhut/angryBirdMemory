@@ -4,9 +4,9 @@
     <item android:id="@+id/reload"
         android:icon="@drawable/reload"
         app:showAsAction="ifRoom"
-        android:title="Reload image">
+        android:title="@string/itemReload">
     </item>
-    <item
+  <!--  <item
         android:id="@+id/amountImage"
         android:title="Amount of image"
         app:showAsAction="never">
@@ -28,10 +28,10 @@
                 android:title="4 images">
             </item>
         </menu>
-    </item>
+    </item>-->
     <item
         android:id="@+id/setting"
         android:icon="@drawable/setting"
-        android:title="Setting">
+        android:title="@string/itemSetting">
     </item>
 </menu>

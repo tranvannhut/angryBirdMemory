@@ -29,4 +29,7 @@
     <string name="description_origin_image">The origin image to user find result based on this image</string>
     <string name="description_result_image">The result image to user match with origin image</string>
     <string name="description_reload_image">when user click image then reload origin and result image</string>
+    <string name="itemSetting">Setting</string>
+    <string name="itemReload">Reload</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.nay.angrybirdsmemory;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -33,6 +34,10 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
 
     // Constants
     private static final int REQUEST_CODE = 1234;
+    public static int amountImage = 1; // Amount image what user want to remember
+    public static int timeRemember = 10000; // Time to remember origin image
+    public static int timeResponse = 10000; // Time to find image match with origin image
+
 
     // Items
     TextView textViewPoint;
@@ -40,6 +45,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
     LinearLayout linearLayoutQuestion;
     LinearLayout linearLayoutResult;
     Button btnReplay, btnApply, btnCancel;
+    TextView informAmountImage, txtTimeRememberImage, txtTimeResponseImage;
 
     // Properties
     ProgressBar progressBar;
@@ -51,9 +57,6 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
     String matchImage1, matchImage2, matchImage3, matchImage4;
     String nameImage, nameImage2, nameImage3, nameImage4;//name of result returned image
     int totalPoint = 100;
-    public static int amountImage = 1; // Amount image what user want to remember
-    public static int timeRemember = 1000; // Time to remember origin image
-    public static int timeResponse = 1000; // Time to find image match with origin image
     boolean flagBtnReplay, flagCountDown;
     SeekBar seekBarAmountImage, timeRememberImage, timeResponseImage;
     CountDownTimer countDownTimer;
@@ -69,10 +72,11 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         this.reflection();
         // set image question animation
         animationScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
-
         // set display point
         totalPoint = shareTotalPoint.getInt("point", 100);
         amountImage = shareTotalPoint.getInt("amountImage", 1);
+        timeRemember = shareTotalPoint.getInt("timeRemember", 10000);
+        timeResponse = shareTotalPoint.getInt("timeResponse", 10000);
         textViewPoint.setText(String.valueOf(totalPoint));
         // setting and reload image when run the first time
         this.displayAmountImage(amountImage);
@@ -151,6 +155,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
             Toast.makeText(this, "Require choose image🥵🤑", Toast.LENGTH_SHORT).show();
         }
         // setting value for item point
+        progressBar.setProgress(0);
         calculationPoint();
         textViewPoint.setText(String.valueOf(totalPoint));
         super.onActivityResult(requestCode, resultCode, data);
@@ -158,25 +163,22 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
 
     // reflection for item
     private void reflection() {
-        linearLayoutQuestion = (LinearLayout) findViewById(R.id.listImage);
-        linearLayoutResult = (LinearLayout) findViewById(R.id.listImageResult);
-        relativeLayout = (RelativeLayout) findViewById(R.id.layoutForScreen);
-        imageQuestion = (ImageView) findViewById(R.id.imageQuestion);
-        imageQuestion2 = (ImageView) findViewById(R.id.imageQuestion2);
-        imageQuestion3 = (ImageView) findViewById(R.id.imageQuestion3);
-        imageQuestion4 = (ImageView) findViewById(R.id.imageQuestion4);
-        imageResult = (ImageView) findViewById(R.id.imageViewResult);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        linearLayoutQuestion = findViewById(R.id.listImage);
+        linearLayoutResult = findViewById(R.id.listImageResult);
+        relativeLayout = findViewById(R.id.layoutForScreen);
+        imageQuestion = findViewById(R.id.imageQuestion);
+        imageQuestion2 = findViewById(R.id.imageQuestion2);
+        imageQuestion3 = findViewById(R.id.imageQuestion3);
+        imageQuestion4 = findViewById(R.id.imageQuestion4);
+        imageResult = findViewById(R.id.imageViewResult);
+        progressBar = findViewById(R.id.progressBar);
         listImage = getResources().getStringArray(R.array.array_image);
         arrayListImage = new ArrayList<>(Arrays.asList(listImage));
-        textViewPoint = (TextView) findViewById(R.id.textViewPoint);
-        imageResult2 = (ImageView) findViewById(R.id.imageViewResult2);
-        imageResult3 = (ImageView) findViewById(R.id.imageViewResult3);
-        imageResult4 = (ImageView) findViewById(R.id.imageViewResult4);
-        btnReplay = (Button) findViewById(R.id.btnReplay);
-        btnApply = (Button) findViewById(R.id.btnApply);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-
+        textViewPoint = findViewById(R.id.textViewPoint);
+        imageResult2 = findViewById(R.id.imageViewResult2);
+        imageResult3 = findViewById(R.id.imageViewResult3);
+        imageResult4 = findViewById(R.id.imageViewResult4);
+        btnReplay = findViewById(R.id.btnReplay);
     }
 
 
@@ -184,6 +186,8 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         SharedPreferences.Editor shaEditor = shareTotalPoint.edit();
         shaEditor.putInt("point", totalPoint);
         shaEditor.putInt("amountImage", amountImage);
+        shaEditor.putInt("timeResponse", timeResponse);
+        shaEditor.putInt("timeRemember", timeRemember);
         shaEditor.apply();
     }
 
@@ -194,12 +198,10 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         return true;
     }
 
+    // when user choose optionMenu setting
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.amountImage:
-                //not do thing
-                return true;
             case R.id.reload:
                 // reload the question image
                 this.displayAmountImage(amountImage);
@@ -207,7 +209,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
             case R.id.setting:
                 customSetting();
                 return true;
-            case R.id.subOneImage:
+/*            case R.id.subOneImage:
                 amountImage = 1;
                 this.displayAmountImage(amountImage);
                 return true;
@@ -222,7 +224,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
             case R.id.subFourImage:
                 amountImage = 4;
                 this.displayAmountImage(amountImage);
-                return true;
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -330,6 +332,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
             int idImageQuestion4 = getResources().getIdentifier(matchImage4, "drawable", getPackageName()); // get id of image
             imageQuestion4.setImageResource(idImageQuestion4);  // normal when call method setImageResource
         }
+
         setCountDownTimer();
         calculationPoint();
     }
@@ -467,88 +470,126 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
 
     // custom dialog to setting time and amount image
     private void customSetting() {
+        countDownTimer.cancel();
+        int savedTimeRemember = timeRemember;  // saved temporary about time remember origin image
+        int savedTimeResponse = timeResponse;  // saved temporary about time response image
+        int savedAmountImage = amountImage;    // saved temporary about amount image to display
+
         Dialog dialog = new Dialog(this);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(R.layout.custom_dialog);
 
         dialog.show();
+        informAmountImage = dialog.findViewById(R.id.informAmountImage);
+        txtTimeRememberImage = dialog.findViewById(R.id.informTimeRememberOrigin);
+        txtTimeResponseImage = dialog.findViewById(R.id.informTimeResponseImage);
         seekBarAmountImage = dialog.findViewById(R.id.seekBarAmountImage);
         timeRememberImage = dialog.findViewById(R.id.seekBarTimeOriginImage);
         timeResponseImage = dialog.findViewById(R.id.seekBarTimeResponseImage);
+        btnApply = dialog.findViewById(R.id.btnApply);
+        btnCancel = dialog.findViewById(R.id.btnCancel);
+        informAmountImage.setText(String.valueOf(amountImage) + " image");
+        txtTimeRememberImage.setText(String.valueOf(timeRemember / 1000) + " seconds");
+        txtTimeResponseImage.setText(String.valueOf(timeResponse / 1000) + " seconds");
+        seekBarAmountImage.setProgress(--amountImage);
+        timeRememberImage.setProgress(timeRemember / 1000);
+        timeResponseImage.setProgress(timeResponse / 1000);
 
         seekBarAmountImage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 amountImage = ++progress;
+                informAmountImage.setText(String.valueOf(amountImage) + " image");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
         });
         timeRememberImage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d("Time setting remember", String.valueOf(progress));
-                timeRemember = progress;
+                timeRemember = progress * 1000;
+                txtTimeRememberImage.setText(String.valueOf(progress) + " seconds");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
         });
         timeResponseImage.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d("Time setting response", String.valueOf(progress));
-                timeResponse = progress;
+                timeResponse = progress * 1000;
+                txtTimeResponseImage.setText(String.valueOf(progress) + " seconds");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+//                disableBtnCancel();
             }
         });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                amountImage = savedAmountImage;
+                timeRemember = savedTimeRemember;
+                timeResponse = savedTimeResponse;
+                displayAmountImage(amountImage);
+                dialog.dismiss();
+            }
+        });
+
+
         btnApply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                displayAmountImage(amountImage);
+                dialog.dismiss();
             }
         });
+
     }
 
     // method setting time to play game
     private void setCountDownTimer() {
-        countDownTimer = new CountDownTimer(10000, 100) {
+        int maxProgress = 1;
+        if (timeRemember > 0) {
+            maxProgress = timeRemember / 1000;
+        }
+        progressBar.setMax(maxProgress);
+        progressBar.setProgress(0);
+        countDownTimer = new CountDownTimer(timeRemember, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 flagCountDown = true;
                 int progress = progressBar.getProgress();
-                progress += 1;
                 if (progress >= progressBar.getMax()) {
                     progress = 0;
                 }
+                progress += 1;
                 progressBar.setProgress(progress);
-
             }
 
+            @SuppressLint("LongLogTag")
             @Override
             public void onFinish() {
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(QuestionAngryBirdActivity.this);
@@ -568,7 +609,10 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
                         countDownTimer.start();
                     }
                 });
-                alertBuilder.show();
+                Log.d("User back return to main screen?", isFinishing() + "");
+                if (!isFinishing()) {
+                    alertBuilder.show();
+                }
             }
         }.start();
     }
