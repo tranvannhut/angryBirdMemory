@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/textViewAngryBird"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:background="#00BCD4"
         android:gravity="center"
         android:layout_weight="1"
