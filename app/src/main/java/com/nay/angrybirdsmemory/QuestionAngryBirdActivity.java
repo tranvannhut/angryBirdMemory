@@ -67,15 +67,14 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
     boolean flagBtnReplay, flagCountDown;
     SeekBar seekBarAmountImage, timeRememberImage, timeResponseImage;
     CountDownTimer countDownTimer;
-    CountDownTimer countDownMedia;
-    boolean flagAmountImage;
+    boolean isTurnSound;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_angry_bird);
-
+        isTurnSound = true;
         flagCountDown = false;
         shareTotalPoint = getSharedPreferences("totalPoint", MODE_PRIVATE);
         // reflection item
@@ -90,6 +89,8 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         textViewPoint.setText(String.valueOf(totalPoint));
         // setting and reload image when run the first time
 
+        // start music when user play
+        Log.d("Start", "App start first");
         playMedia();
 
         this.displayAmountImage(amountImage);
@@ -118,7 +119,6 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             ArrayList<String> listImage = data.getStringArrayListExtra("nameImage");
-            Log.d("Info size", listImage.size() + "");
             // setting display for result returned image
             this.displayResultImage(listImage);
             // compare result returned of image
@@ -126,49 +126,60 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         }
         if (requestCode == REQUEST_CODE && resultCode == RESULT_CANCELED) {
             totalPoint -= 10;
-            if (mediaPlayerFail == null && (!isFinishing())) {
-                mediaPlayerFail = MediaPlayer.create(this, R.raw.fail);
-            }
+            if (isTurnSound) {
+                if (mediaPlayerFail == null && (!isFinishing())) {
+                    mediaPlayerFail = MediaPlayer.create(this, R.raw.fail);
+                }
 
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    //deprecated in API 26
+                    v.vibrate(1000);
+                }
+                mediaPlayerFail.start();
+
+                new CountDownTimer(2000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (mediaPlayerFail != null && mediaPlayerFail.isPlaying()) {
+                            mediaPlayerFail.stop();
+                            mediaPlayerFail.release();
+                            mediaPlayerFail = null;
+                            mediaPlayerCongratulation = null;
+                        }
+                        if (flagBtnReplay) {
+                            btnReplay.setVisibility(View.VISIBLE);
+                        }
+                        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                            mediaPlayer.start();
+                        }
+                    }
+                }.start();
             } else {
-                //deprecated in API 26
-                v.vibrate(1000);
+                new CountDownTimer(1200, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (flagBtnReplay) {
+                            btnReplay.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }.start();
             }
-            mediaPlayerFail.start();
-            mediaPlayerFail.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-//                    playMedia();
-                }
-            });
-            new CountDownTimer(2000, 1000) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    if (mediaPlayerFail.isPlaying()) {
-                        mediaPlayerFail.stop();
-                        mediaPlayerFail.release();
-                        mediaPlayerFail = null;
-                        mediaPlayerCongratulation = null;
-                        mediaPlayer = null;
-                        playMedia();
-                    }
-                    if (flagBtnReplay) {
-                        btnReplay.setVisibility(View.VISIBLE);
-                    }
-                }
-            }.start();
             countDownTimer.start();
             Toast.makeText(this, "Require choose image🥵🤑", Toast.LENGTH_SHORT).show();
+
         }
         // setting value for item point
         progressBar.setProgress(0);
@@ -222,25 +233,18 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
                 // reload the question image
                 this.displayAmountImage(amountImage);
                 return true;
+            case R.id.sound:
+                isTurnSound = !isTurnSound;
+                if (!isTurnSound) {
+                    item.setIcon(R.drawable.soundon);
+                } else {
+                    item.setIcon(R.drawable.soundoff);
+                }
+                this.turnSound();
+                return true;
             case R.id.setting:
                 customSetting();
                 return true;
-/*            case R.id.subOneImage:
-                amountImage = 1;
-                this.displayAmountImage(amountImage);
-                return true;
-            case R.id.subTwoImage:
-                amountImage = 2;
-                this.displayAmountImage(amountImage);
-                return true;
-            case R.id.subThreeImage:
-                amountImage = 3;
-                this.displayAmountImage(amountImage);
-                return true;
-            case R.id.subFourImage:
-                amountImage = 4;
-                this.displayAmountImage(amountImage);
-                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -423,36 +427,54 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         totalPoint += 5; // increase 5 point
         imageResult.setEnabled(false); // when choose image ok then disable image result
         Toast.makeText(this, "Exactly!", Toast.LENGTH_SHORT).show();
-        mediaPlayerCongratulation = MediaPlayer.create(this, R.raw.congratulation);
-        if (mediaPlayerCongratulation == null && (!isFinishing())) {
+        if (isTurnSound) {
             mediaPlayerCongratulation = MediaPlayer.create(this, R.raw.congratulation);
+            if (mediaPlayerCongratulation == null && (!isFinishing())) {
+                mediaPlayerCongratulation = MediaPlayer.create(this, R.raw.congratulation);
+            }
+            mediaPlayerCongratulation.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaPlayerCongratulation.start();
+                }
+            });
+            new CountDownTimer(3000, 1500) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    if (mediaPlayerCongratulation != null && mediaPlayerCongratulation.isPlaying()) {
+                        mediaPlayerCongratulation.stop();
+                        mediaPlayerCongratulation.release();
+                        mediaPlayerCongratulation = null;
+                        mediaPlayerFail = null;
+                    }
+                    // continue play music
+                    if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                        mediaPlayer.start();
+                    }
+                    displayAmountImage(amountImage);
+                }
+            }.start();
+        } else {
+            new CountDownTimer(1500, 1500) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.d("Exist activity", "Media not start");
+                    displayAmountImage(amountImage);
+                }
+            }.start();
         }
-        mediaPlayerCongratulation.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mediaPlayerCongratulation.start();
-            }
-        });
-        new CountDownTimer(2500, 1500) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-//                playMedia();
-                mediaPlayerCongratulation.stop();
-                mediaPlayerCongratulation.release();
-                mediaPlayerCongratulation = null;
-                mediaPlayer = null;
-                mediaPlayerFail = null;
-                Log.d("NhutTV1", "ALO,Nice to meet you ");
-                playMedia();
-                displayAmountImage(amountImage);
-            }
-        }.start();
     }
 
     // compare result for the returned image
@@ -485,46 +507,56 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
     }
 
     private void matchImageNotOk() {
-        if (mediaPlayerFail == null && (!isFinishing())) {
-            mediaPlayerFail = MediaPlayer.create(this, R.raw.fail);
-        }
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        // Vibrate for 500 milliseconds
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            //deprecated in API 26
-            v.vibrate(1000);
-        }
-        mediaPlayerFail.start();
-        new CountDownTimer(2000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-
+        if (isTurnSound) {
+            if (mediaPlayerFail == null && (!isFinishing())) {
+                mediaPlayerFail = MediaPlayer.create(this, R.raw.fail);
             }
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            // Vibrate for 500 milliseconds
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(1000);
+            }
+            mediaPlayerFail.start();
 
-            @Override
-            public void onFinish() {
-                if (mediaPlayerFail.isPlaying()) {
-                    Log.d("NhutTV1", "ALO,Nice to meet you ");
-                    mediaPlayerFail.stop();
-                    mediaPlayerFail.release();
-                    mediaPlayerFail = null;
-                    mediaPlayerCongratulation = null;
-                    mediaPlayer = null;
-                    playMedia();
+            new CountDownTimer(2000, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
                 }
-                btnReplay.setVisibility(View.VISIBLE);
-                btnReplay.setAnimation(animationScale);
-            }
-        }.start();
-        mediaPlayerFail.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-//                playMedia();
-            }
-        });
+
+                @Override
+                public void onFinish() {
+                    if (mediaPlayerFail != null && mediaPlayerFail.isPlaying()) {
+                        mediaPlayerFail.stop();
+                        mediaPlayerFail.release();
+                        mediaPlayerFail = null;
+                        mediaPlayerCongratulation = null;
+                    }
+                    if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                        mediaPlayer.start();
+                    }
+                    btnReplay.setVisibility(View.VISIBLE);
+                    btnReplay.setAnimation(animationScale);
+                }
+            }.start();
+        } else {
+            new CountDownTimer(1000, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+
+                @Override
+                public void onFinish() {
+                    btnReplay.setVisibility(View.VISIBLE);
+                    btnReplay.setAnimation(animationScale);
+                }
+            }.start();
+        }
         countDownTimer.start();
         totalPoint -= 5;
         imageResult.setEnabled(false);
@@ -649,7 +681,6 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
         }
         progressBar.setMax(maxProgress);
         progressBar.setProgress(0);
-        Log.d("Time", timeRemember + "");
         countDownTimer = new CountDownTimer(timeRemember, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -696,54 +727,26 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
             mediaPlayer = MediaPlayer.create(this, R.raw.music_focus);
         }
         mediaPlayer.start();
-//        onPrepared(mediaPlayer);
+
+        // when music off then continue play again
         mediaPlayer.setLooping(true);
     }
 
-    private void stop() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying() && (isFinishing())) {
-            Log.d("ACTION_MUSIC OFF ", "Status :" + isFinishing() + "music playing : ");
-            mediaPlayer.pause();
-            mediaPlayer.release();
-        }
-    }
 
-    private void countDownMediaPlayer() {
-        countDownMedia = new CountDownTimer(10000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-            }
-
-            @Override
-            public void onFinish() {
-                Log.d("CountDown Finish: ", isFinishing() + " AND " + mediaPlayer);
-                if (mediaPlayer != null && (!isFinishing())) {
-                    mediaPlayer.pause();
-                    mediaPlayer.stop();
-                    mediaPlayer = MediaPlayer.create(QuestionAngryBirdActivity.this, R.raw.main_song_game);
-                }
-                mediaPlayer.start();
-                Log.d("ACTION_MUSIC part2 : ", mediaPlayer.isPlaying() + "AND total duration" + mediaPlayer.getDuration());
-                if (!isFinishing()) {
-                    this.start();
-                }
-            }
-        }.start();
-    }
-
-
+    // when exist this activity
     protected void onPause() {
-        //stop @OverridemediaPlayer:
+        //stop mediaPlayer:
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                }
-            });
-            mediaPlayer.stop();
-            mediaPlayer = null;
+            Log.d("Exist activity", "Media pause");
+//            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                public void onCompletion(MediaPlayer mp) {
+//                    mp.release();
+//                }
+//            });
+//            mediaPlayer.stop();
+//            mediaPlayer = null;
+//            Log.d("Exist activity","Media pause");
         }
         if (mediaPlayerFail != null && mediaPlayerFail.isPlaying()) {
             mediaPlayerFail.pause();
@@ -753,6 +756,7 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
                 }
             });
             mediaPlayerFail.stop();
+            mediaPlayerFail.release();
             mediaPlayerFail = null;
         }
         if (mediaPlayerCongratulation != null && mediaPlayerCongratulation.isPlaying()) {
@@ -763,18 +767,43 @@ public class QuestionAngryBirdActivity extends AppCompatActivity {
                 }
             });
             mediaPlayerCongratulation.stop();
+            mediaPlayerCongratulation.release();
             mediaPlayerCongratulation = null;
         }
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Closing Activity")
+                .setMessage("Are you sure you want to exit this game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                        finish();
+                    }
 
-    public void onPrepared(MediaPlayer player) {
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                player.start();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    // turn on/off music on menu taskbar
+    private void turnSound() {
+        if (!isTurnSound) {
+//            this.onPause();
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
             }
-        });
+        } else {
+            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+            }
+        }
     }
 }
