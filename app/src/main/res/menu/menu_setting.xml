@@ -6,6 +6,11 @@
         app:showAsAction="ifRoom"
         android:title="@string/itemReload">
     </item>
+    <item android:id="@+id/sound"
+        android:icon="@drawable/soundoff"
+        app:showAsAction="ifRoom"
+        android:title="Sound Off">
+    </item>
   <!--  <item
         android:id="@+id/amountImage"
         android:title="Amount of image"
